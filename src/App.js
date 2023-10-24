@@ -9,16 +9,10 @@ function App() {
 
   const selectAll=async()=>{//화살표함수(arrow-function)
     alert("selectAll!")
-    const result = await axios.get('/user')
+    const result = await axios.get('/')
     console.log(result)
-    // http://localhost:4000/movies
   }
-/*
-  const selectWhere=async()=>{
-    alert("selectWhere!")
-    axios.get('/movie/'+3)
-  }
-*/
+
   return (
     <div id="App">
       <h1>React-Express-MySQL 연결</h1>
