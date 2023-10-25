@@ -65,41 +65,45 @@ app.get('/shopall', (req, res) => {
     });
   });
 
-// 카테고리별 상품
+// 카테고리별 상품 localhost:4000/products/bag
 app.get('/products/:productID', (req, res) => {
-    console.log('root');
-    db.query('SELECT * FROM ICT_TEAM.items.category = ?', (err, data) => {
-      if (!err) {
-        console.log(data);
-        res.send(data); //응답을 클라이언트에 보낸다.
-      } else {
-        console.log(err);
-      }
-    });
+  const category = req.params.productID; // 요청 URL에서 productID를 가져옵니다.
+    db.query('SELECT * FROM ICT_TEAM.items WHERE category = ?', [category], (err1, data1) => {
+    if (!err1) {
+      console.log(data1);
+      res.send(data1); // 클라이언트에 응답을 보냅니다.
+    } else {
+      console.log(err1);
+      res.status(500).send('데이터베이스에서 정보를 가져오는 동안 오류가 발생했습니다.'); // 에러 응답을 보냅니다.
+    }
   });
+});
 
-// goods 제품상세 페이지
-app.get('/goods/:productID', (req, res) => {
-    console.log('root');
-    db.query('SELECT * FROM ICT_TEAM.items.category = ?', (err, data) => {
-      if (!err) {
-        console.log(data);
-        res.send(data); //응답을 클라이언트에 보낸다.
-      } else {
-        console.log(err);
-      }
-    });
+
+// goods 제품상세 페이지 localhost:4000/goods/1
+app.get('/goods/:goodID', (req, res) => {
+  const good = req.params.goodID; // 요청 URL에서 goodID를 가져옵니다.
+    db.query('SELECT * FROM ICT_TEAM.items WHERE id = ?', [good], (err2, data2) => {
+    if (!err2) {
+      console.log(data2);
+      res.send(data2); // 클라이언트에 응답을 보냅니다.
+    } else {
+      console.log(err2);
+      res.status(500).send('데이터베이스에서 정보를 가져오는 동안 오류가 발생했습니다.'); // 에러 응답을 보냅니다.
+    }
   });
+});
 
-// 상세페이지에서 장바구니 담기
+
+// 상세페이지에서 장바구니 담기 localhost:4000/goods/1
 app.post('/goods/:productID', (req, res) => {
     console.log('root');
-    db.query('INSERT INTO ICT_TEAM.cart(id, user_id, quantitiy, items_id) VALUES(?, ?, ?, ?)', (err, data) => {
-      if (!err) {
-        console.log(data);
-        res.send(data); //응답을 클라이언트에 보낸다.
+    db.query('INSERT INTO ICT_TEAM.cart(id, user_id, quantitiy, items_id) VALUES(?, ?, ?, ?)', (err3, data3) => {
+      if (!err3) {
+        console.log(data3);
+        res.send(data3); //응답을 클라이언트에 보낸다.
       } else {
-        console.log(err);
+        console.log(err3);
       }
     });
   });
@@ -108,12 +112,12 @@ app.post('/goods/:productID', (req, res) => {
 //상세페이지에 담았던 정보 가져오기
 app.get('/cart', (req, res) => {
     console.log('root');
-    db.query('SELECT * FROM ICT_TEAM.items.cart = ?', (err, data) => {
+    db.query('SELECT * FROM ICT_TEAM.items.cart = ?', (err4, data4) => {
       if (!err) {
-        console.log(data);
-        res.send(data); //응답을 클라이언트에 보낸다.
+        console.log(data4);
+        res.send(data4); //응답을 클라이언트에 보낸다.
       } else {
-        console.log(err);
+        console.log(err4);
       }
     });
   });
@@ -121,12 +125,12 @@ app.get('/cart', (req, res) => {
 // 결제페이지로 정보 가져가기  
 app.post('/cart', (req, res) => {
     console.log('root');
-    db.query('INSERT INTO ICT_TEAM.orders_detail(id, orders_id, items_id, quantity, unit_price, total_price) VALUES(?, ?, ?, ?, ?, ?)', (err, data) => {
-      if (!err) {
-        console.log(data);
-        res.send(data); //응답을 클라이언트에 보낸다.
+    db.query('INSERT INTO ICT_TEAM.orders_detail(id, orders_id, items_id, quantity, unit_price, total_price) VALUES(?, ?, ?, ?, ?, ?)', (err5, data5) => {
+      if (!err5) {
+        console.log(data5);
+        res.send(data5); //응답을 클라이언트에 보낸다.
       } else {
-        console.log(err);
+        console.log(err5);
       }
     });
   });
@@ -135,12 +139,12 @@ app.post('/cart', (req, res) => {
 // 주문할 물건 정보 가져오기
 app.get('/delivery', (req, res) => {
     console.log('root');
-    db.query('SELECT * FROM ICT_TEAM.orders_detail = ?', (err, data) => {
-      if (!err) {
+    db.query('SELECT * FROM ICT_TEAM.orders_detail = ?', (err6, data6) => {
+      if (!err6) {
         console.log(data);
-        res.send(data); //응답을 클라이언트에 보낸다.
+        res.send(data6); //응답을 클라이언트에 보낸다.
       } else {
-        console.log(err);
+        console.log(err6);
       }
     });
   });
@@ -148,12 +152,12 @@ app.get('/delivery', (req, res) => {
 // 배송정보입력 후 주문완료
 app.post('/delivery', (req, res) => {
     console.log('root');
-    db.query('INSERT INTO ICT_TEAM.delivery(id, fullname, address, phone, request) VALUES(?, ?, ?, ?, ?)', (err, data) => {
-      if (!err) {
-        console.log(data);
-        res.send(data); //응답을 클라이언트에 보낸다.
+    db.query('INSERT INTO ICT_TEAM.delivery(id, fullname, address, phone, request) VALUES(?, ?, ?, ?, ?)', (err7, data7) => {
+      if (!err7) {
+        console.log(data7);
+        res.send(data7); //응답을 클라이언트에 보낸다.
       } else {
-        console.log(err);
+        console.log(err7);
       }
     });
   }); 

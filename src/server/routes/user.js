@@ -112,7 +112,7 @@ module.exports = function(){
         // sql_list안에 있는 signup_query를 불러와서 쿼리문을 유저가 보낸 데이터와 함께 실행
         const result = await sql_func.execute(
             sql_list.signup_query, 
-            [id, password, name]
+            [id, email, password, fullname, address, phone]
         )
         console.log(result)
         // 회원 가입이 완료되면 로그인 페이지로 이동
