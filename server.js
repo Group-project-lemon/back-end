@@ -96,38 +96,39 @@ app.get('/goods/:goodID', (req, res) => {
 });
 
 
-// 상세페이지에서 장바구니 담기 localhost:4000/goods/1 (민지)
-app.post('/goods/:productID', (req, res) => {
-  // params 추가
-  const product = req.params.productID;
+// 장바구니 담기 (민지) check
+// (/goods/:goodID/cart) 로 상품상세정보를 같이 장바구니에 추가할 수 있도록 함
+app.post('/goods/:goodID/cart', (req, res) => {
+  
+  const good = req.params.goodID;
   const quantity = req.body.quantity; // body name값 맞추기 임의로 quantity로 정함
   const user_id = req.session.logined.user_id;// 사용자의 session값 가져오기
-  console.log('Received productID:', productID);
+  console.log('Received goodID:', good);
 
   // quantitiy -> quantity , id 제거
-  db.query('INSERT INTO ICT_TEAM.cart(user_id, quantity, items_id) VALUES(?, ?, ?)', [user_id, quantity, product], (err, data) => {
-    if (!err) {
-      console.log(data);
-      res.send(data); //응답을 클라이언트에 보낸다.
+  db.query('INSERT INTO ICT_TEAM.cart(user_id, quantity, items_id) VALUES(?, ?, ?)', [user_id, quantity, good], (err3, data3) => {
+    if (!err3) {
+      console.log(data3);
+      res.send(data3); //응답을 클라이언트에 보낸다.
     } else {
-      console.log(err);
+      console.log(err3);
     }
   });
 });
 
 //cart 장바구니 페이지
-//상세페이지에 담았던 정보 가져오기 (민지)
+//상세페이지에서 담았던 정보를 장바구니페이지에 가져오기 (민지) check
 app.get('/cart', (req, res) => {
     // 로그인상태
     if (req.session.logined) {
       const user_id = req.session.logined.user_id;
 
-      db.query('SELECT * FROM ICT_TEAM.cart WHERE user_id = ? ', [user_id], (err, data) => {
-        if (!err) {
-          console.log(data);
-          res.send(data); //응답을 클라이언트에 보낸다.
+      db.query('SELECT * FROM ICT_TEAM.cart WHERE user_id = ? ', [user_id], (err4, data4) => {
+        if (!err4) {
+          console.log(data4);
+          res.send(data4); //응답을 클라이언트에 보낸다.
         } else {
-          console.log(err);
+          console.log(err4);
           res.status(500).json({ error: '장바구니를 불러올 수 없습니다.' }); 
         }
       });
@@ -137,11 +138,17 @@ app.get('/cart', (req, res) => {
     }
   });
 
+  // 장바구니에서 목록 삭제하기
+app.delete('/cart', (req, res) => {
 
-// 결제페이지로 정보 가져가기  
-app.post('/cart', (req, res) => {
-    console.log('root');
-    db.query('INSERT INTO ICT_TEAM.orders_detail(id, orders_id, items_id, quantity, unit_price, total_price) VALUES(?, ?, ?, ?, ?, ?)', (err5, data5) => {
+})
+
+// 결제페이지(추가정보입력)로 장바구니정보를 보내기  (민지)
+app.post('/cart/order', (req, res) => {
+    // 사용자의 session 값
+    const user_id = req.session.logined.user_id;
+
+    db.query('INSERT INTO ICT_TEAM.orders(user_id, delivery_id, total_amount, order_status) VALUES(?, ?, ?, ?)', (err5, data5) => {
       if (!err5) {
         console.log(data5);
         res.send(data5); //응답을 클라이언트에 보낸다.
@@ -150,6 +157,11 @@ app.post('/cart', (req, res) => {
       }
     });
   });
+
+  // 추가로 입력한 정보와 orders 데이터를 결제페이지에 보내기
+app.post('/cart/order/checkout', (req, res) => {
+
+})
 
 //delivery 주문페이지
 // 주문할 물건 정보 가져오기
