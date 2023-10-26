@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function popup(data){
+            if(data){
+                alert(data)
+            }
+        }
+    </script>
+</head>
+<body onload="popup('<%=data%>')">
+    <form action="/user/check_id2" method="get">
+        <label>ID</label>
+        <input type="text" name = "_id"><br>
+        <!-- 서버가 보내는 data가 ""이 아니라면 <p>data</p>를 추가 -->
+        <% if(data){ %>
+            <p><%=data%></p>
+        <% } %>
+        <input type="submit" value="아이디 체크">
+    </form>
+</body>
+</html>
