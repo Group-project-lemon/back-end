@@ -138,13 +138,23 @@ app.get('/cart', (req, res) => {
     }
   });
 
-  // 장바구니에서 목록 삭제하기
+  // 장바구니에서 목록 삭제하기 (민지)
 app.delete('/cart', (req, res) => {
+  const user_id = req.session.logined.user_id;
 
-})
+  db.query('DELETE FROM cart WHERE user_id = ?' , [user_id], (err, result) => {
+    if (!err) {
+      console.log(result);
+      res.status(204).send();
+    } else {
+      console.log(err);
+      res.status(500).json({ error: '목록을 삭제할 수 없습니다.'});
+    }
+  });
+});
 
-// 결제페이지(추가정보입력)로 장바구니정보를 보내기  (민지)
-app.post('/cart/order', (req, res) => {
+// 주문페이지에서 상세주문정보 불러오기  (민지)
+app.get('/cart/order', (req, res) => {
     // 사용자의 session 값
     const user_id = req.session.logined.user_id;
 
@@ -158,7 +168,7 @@ app.post('/cart/order', (req, res) => {
     });
   });
 
-  // 추가로 입력한 정보와 orders 데이터를 결제페이지에 보내기
+  // 추가로 입력한 정보와 상세주문정보를 보내기
 app.post('/cart/order/checkout', (req, res) => {
 
 })
