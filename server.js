@@ -2,7 +2,10 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 4000;
 const db = require('./config/db.js');
-const bodyParser = require('body-parser'); // body 전달
+// const bodyParser = require('body-parser'); // body 전달
+const user = require('./routes/user')()
+app.use('/user', user)
+
 
 app.set('views', __dirname + '/views') // view 페이지 주소 자동경로
 app.set('view engine', 'ejs') // view 엔진(백엔트 테스트 목적)
@@ -47,8 +50,6 @@ app.get('/', function(req, res){
 
 // auth 회원가입
 // user 로그인
-const user = require('./routes/user')()
-app.use('/user', user)
 
 
 // products
@@ -138,7 +139,7 @@ app.get('/cart', (req, res) => {
     }
   });
 
-  // 장바구니에서 목록 삭제하기 (민지)
+  // 장바구니에서 목록 삭제하기 (민지) check
 app.delete('/cart', (req, res) => {
   const user_id = req.session.logined.user_id;
 
@@ -168,7 +169,7 @@ app.get('/cart/order', (req, res) => {
     });
   });
 
-  // 추가로 입력한 정보와 상세주문정보를 보내기
+  // 추가로 입력한 정보와 상세주문정보를 보내기 (민지)
 app.post('/cart/order/checkout', (req, res) => {
 
 })
