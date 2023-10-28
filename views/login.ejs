@@ -1,18 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form action="/user/signin" method="post">
-        <label>ID</label>
-        <input type="text" name = "_id"><br>
-        <label>Password</label>
-        <input type="password" name="_pass"><br>
-        <input type="submit" value="로그인">
-    </form>
-    <button onclick="location.href='/user/check_id'">회원가입</button>
-</body>
-</html>
+<%-include('header.ejs')%> 
+<form action="/loginProc" method="post">
+  <ul>
+    <!-- <li>로그인</li> -->
+    <li>메일 : <input type="text" name="email" required style="margin-bottom:10px"></li>
+    <li>비번 : <input type="password" name="password" required style="margin-bottom:10px"></li>
+    
+       <button>로그인</button>
+       <a href="/regist">등록하기</a>
+  </ul>
+</form>
+<%-include('footer.ejs')%>

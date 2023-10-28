@@ -1,55 +1,102 @@
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 4000;
-const db = require('./config/db.js');
-// const bodyParser = require('body-parser'); // body 전달
-const user = require('./routes/user')()
-app.use('/user', user)
+const db = require('./config/db');
 
 
-app.set('views', __dirname + '/views') // view 페이지 주소 자동경로
-app.set('view engine', 'ejs') // view 엔진(백엔트 테스트 목적)
-app.use(express.urlencoded({extended:false})) // post 방식으로 데이터가 들어올때 json 형태로 데이터를 로드
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static('public'));
 
-require('dotenv').config() // 환경변수 dotenv모듈 사용
+require('dotenv').config();
 
-// express-session 모듈을 로드 
-const session = require('express-session')
+const session = require('express-session');
 
 app.use(
-    session({
-        secret : process.env.session_key , // secret 키 값들은 외부에 노출이 되면 보안 상 문제가 발생할 수 있다.  
-        resave : false, 
-        saveUninitialized: false, 
-        cookie : {
-            maxAge : 600000
-        }
-    })
-)
+  session({
+    secret: process.env.session_key,
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 600000,
+    },
+  })
+);
+app.use((req, res, next)=>{  
+  res.locals.email = "";
+  res.locals.password = "";
 
-
-
+  if(req.session.member){
+    res.locals.user_id=req.session.user.email
+    res.locals.name=req.session.user.password
+  }
+  next()
+});
 
 
 //////////////////// 라우팅
 
-// localhost:4000/ 홈페이지 첫접속시
+app.get('/', (req, res) => {
+  // 세션에서 사용자 정보 가져오기
+  const user = req.session.user;
 
-app.get('/', function(req, res){
-    // session안에 logined에 데이터가 존재하지 않는다면 /user 주소로 요청
-    if(!req.session.logined){
-        res.redirect('/user')
-    }
-    // session안에 logined에 데이터가 존재한다면 메인화면 주소로 요청
-    else{
-        res.redirect('/products/shopall/')
-    }
+  if (user) {
+    // 사용자 정보를 템플릿에 전달
+    res.render('index', { email: user.email, fullname: user.fullname, /* other user data */ });
+  } else {
+    // 로그인되지 않은 경우
+    res.render('index', { email: null, fullname: null, /* other user data */ });
+  }
+});
+
+app.get('/login', (req, res) => {
+  res.render('login')
 })
 
+app.post('/loginProc', (req, res) => {  // 회원 로그인 하기
+  const email = req.body.email;
+  const password = req.body.password;
+ 
+  var sql = `select * from user where email=? and password=?`  
+  var values = [email,password];   
+  db.query(sql, values, function(err, result){
+    if(err) throw err;
+    if(result.length===0){
+      res.send("<script>alert('없는 아이디입니다.');location.href='/login'; </script>")
+    }else{
+      console.log(result[0])  
+      req.session.user = result[0]
+      res.send("<script>alert('로그인 되었습니다.');location.href='/'; </script>")
+    }   
+  })
+})
 
+app.get('/logout',(req, res)=>{
+  req.session.user = null;
+  res.send("<script>alert('로그아웃 되었습니다.');location.href='/'; </script>")
+})
 
-// auth 회원가입
-// user 로그인
+app.get('/regist', (req, res) => {
+  res.render('regist')
+})
+
+app.post('/registProc', (req, res) => {  // 회원 등록 하기
+  const email = req.body.email;
+  const password = req.body.password;
+  const fullname = req.body.fullname;
+  const address = req.body.address;
+  const phone = req.body.phone;
+ 
+  var sql = `insert into user(email,password,fullname,address,phone)values(?,?,?,?,?)`  
+  var values = [email,password,fullname,address,phone];  
+  db.query(sql, values, function(err, result){
+    if(err) throw err;
+    console.log('자료 1개 삽입했습니다.');
+    res.send("<script>alert('등록되었습니다.'); location.href='/login';</script>") 
+  })
+});
+
 
 
 // products
@@ -154,12 +201,12 @@ app.delete('/cart', (req, res) => {
   });
 });
 
-// 주문페이지에서 상세주문정보 불러오기  (민지)
+// 주문페이지에서 상세주문정보 불러오기  (민지) check
 app.get('/cart/order', (req, res) => {
     // 사용자의 session 값
     const user_id = req.session.logined.user_id;
 
-    db.query('INSERT INTO ICT_TEAM.orders(user_id, delivery_id, total_amount, order_status) VALUES(?, ?, ?, ?)', (err5, data5) => {
+    db.query('INSERT INTO ICT_TEAM.orders_detail(user_id, items_id, quantity, unit_price, total_price) VALUES(?, ?, ?, ?, ?)', (err5, data5) => {
       if (!err5) {
         console.log(data5);
         res.send(data5); //응답을 클라이언트에 보낸다.
@@ -230,7 +277,6 @@ app.post('/cancel', (req, res) => {
   
   
 
-// 포트접속
-app.listen(PORT, () => {
-    console.log(`Server run : Server:${PORT}/ Start`);
-})
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
