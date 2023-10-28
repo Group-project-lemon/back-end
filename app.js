@@ -58,7 +58,7 @@ app.post('/loginProc', (req, res) => {  // 회원 로그인 하기
   })
 })
 
-app.get('/logout',(req, res)=>{
+app.get('/logout',(req, res)=>{   // 로그아웃
   req.session.user = null;
   res.send("<script>alert('로그아웃 되었습니다.');location.href='/'; </script>")
 })
