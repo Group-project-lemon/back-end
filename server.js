@@ -151,7 +151,7 @@ app.post('/goods/:goodID/cart', (req, res) => {
   
   const good = req.params.goodID;
   const quantity = req.body.quantity; // body name값 맞추기 임의로 quantity로 정함
-  const user_id = req.session.logined.user_id;// 사용자의 session값 가져오기
+  const user_id = req.session.user.user_id;// 사용자의 session값 가져오기
   console.log('Received goodID:', good);
 
   // quantitiy -> quantity , id 제거
@@ -170,7 +170,7 @@ app.post('/goods/:goodID/cart', (req, res) => {
 app.get('/cart', (req, res) => {
     // 로그인상태
     if (req.session.logined) {
-      const user_id = req.session.logined.user_id;
+      const user_id = req.session.user.user_id;
 
       db.query('SELECT * FROM ICT_TEAM.cart WHERE user_id = ? ', [user_id], (err4, data4) => {
         if (!err4) {
@@ -219,7 +219,7 @@ app.get('/cart/order', (req, res) => {
 
   // 추가로 입력한 정보와 상세주문정보를 보내기 (민지)
 app.post('/cart/order/checkout', (req, res) => {
-
+    const user_id = 
 })
 
 //delivery 주문페이지
