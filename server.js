@@ -202,7 +202,7 @@ app.delete('/cart', (req, res) => {
   });
 });
 
-// 주문페이지에서 상세주문정보 불러오기  (민지) check
+// 주문페이지에서 상세주문정보 불러오기  (민지) ? 카트테이블과 오더디테일테이블 ?
 app.get('/cart/order', (req, res) => {
     // 사용자의 session 값
     const user_id = req.session.user.user_id;
@@ -217,13 +217,28 @@ app.get('/cart/order', (req, res) => {
     });
   });
 
-  // 추가로 입력한 정보와 상세주문정보를 보내기 (민지)
+  // 추가로 입력한 정보를 저장 (민지) 
 app.post('/cart/order/checkout', (req, res) => {
-    const user_id = req.
-})
+    const user_id = req.session.user.user_id;
+    const fullname = req.body.fullname;
+    const address = req.body.address;
+    const phone = req.body.phone;
+    const request = req.body.request;
+
+    db.query('INSERT INTO ICT_TEAM.delivery(user_id, fullname, address, phone, request) VALUES (?, ?, ?, ?, ?)', 
+    [user_id, fullname, address, phone, request], (err, data) => {
+      if (!err) {
+        console.log(data);
+        res.json(data);
+      } else {
+        console.log(err);
+        res.json({ error : '데이터를 저장하는 동안 오류가 발생했습니다.'});
+      }
+    });
+});
 
 //delivery 주문페이지
-// 주문할 물건 정보 가져오기
+// 주문할 물건 정보 가져오기 ???? 오더디테일에 언제 post하는지 ?
 app.get('/delivery', (req, res) => {
     console.log('root');
     db.query('SELECT * FROM ICT_TEAM.orders_detail = ?', (err6, data6) => {
