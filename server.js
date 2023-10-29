@@ -23,6 +23,7 @@ app.use(
     },
   })
 );
+
 app.use((req, res, next)=>{  
   res.locals.email = "";
   res.locals.password = "";
@@ -107,7 +108,7 @@ app.get('/shopall', (req, res) => {
     db.query('SELECT * FROM ICT_TEAM.items', (err, data) => {
       if (!err) {
         console.log(data);
-        res.send(data); //응답을 클라이언트에 보낸다.
+        res.json(data); //응답을 클라이언트에 보낸다.
       } else {
         console.log(err);
       }
@@ -120,10 +121,10 @@ app.get('/products/:productID', (req, res) => {
     db.query('SELECT * FROM ICT_TEAM.items WHERE category = ?', [category], (err1, data1) => {
     if (!err1) {
       console.log(data1);
-      res.send(data1); // 클라이언트에 응답을 보냅니다.
+      res.json(data1); // 클라이언트에 응답을 보냅니다.
     } else {
       console.log(err1);
-      res.status(500).send('데이터베이스에서 정보를 가져오는 동안 오류가 발생했습니다.'); // 에러 응답을 보냅니다.
+      res.status(500).json('데이터베이스에서 정보를 가져오는 동안 오류가 발생했습니다.'); // 에러 응답을 보냅니다.
     }
   });
 });
@@ -135,10 +136,10 @@ app.get('/goods/:goodID', (req, res) => {
     db.query('SELECT * FROM ICT_TEAM.items WHERE id = ?', [good], (err2, data2) => {
     if (!err2) {
       console.log(data2);
-      res.send(data2); // 클라이언트에 응답을 보냅니다.
+      res.json(data2); // 클라이언트에 응답을 보냅니다.
     } else {
       console.log(err2);
-      res.status(500).send('데이터베이스에서 정보를 가져오는 동안 오류가 발생했습니다.'); // 에러 응답을 보냅니다.
+      res.status(500).json('데이터베이스에서 정보를 가져오는 동안 오류가 발생했습니다.'); // 에러 응답을 보냅니다.
     }
   });
 });
@@ -157,7 +158,7 @@ app.post('/goods/:goodID/cart', (req, res) => {
   db.query('INSERT INTO ICT_TEAM.cart(user_id, quantity, items_id) VALUES(?, ?, ?)', [user_id, quantity, good], (err3, data3) => {
     if (!err3) {
       console.log(data3);
-      res.send(data3); //응답을 클라이언트에 보낸다.
+      res.json(data3); //응답을 클라이언트에 보낸다.
     } else {
       console.log(err3);
     }
@@ -174,7 +175,7 @@ app.get('/cart', (req, res) => {
       db.query('SELECT * FROM ICT_TEAM.cart WHERE user_id = ? ', [user_id], (err4, data4) => {
         if (!err4) {
           console.log(data4);
-          res.send(data4); //응답을 클라이언트에 보낸다.
+          res.json(data4); //응답을 클라이언트에 보낸다.
         } else {
           console.log(err4);
           res.status(500).json({ error: '장바구니를 불러올 수 없습니다.' }); 
@@ -188,12 +189,12 @@ app.get('/cart', (req, res) => {
 
   // 장바구니에서 목록 삭제하기 (민지) check
 app.delete('/cart', (req, res) => {
-  const user_id = req.session.logined.user_id;
+  const user_id = req.session.user.user_id;
 
   db.query('DELETE FROM cart WHERE user_id = ?' , [user_id], (err, result) => {
     if (!err) {
       console.log(result);
-      res.status(204).send();
+      res.status(204).json();
     } else {
       console.log(err);
       res.status(500).json({ error: '목록을 삭제할 수 없습니다.'});
@@ -206,10 +207,10 @@ app.get('/cart/order', (req, res) => {
     // 사용자의 session 값
     const user_id = req.session.logined.user_id;
 
-    db.query('INSERT INTO ICT_TEAM.orders_detail(user_id, items_id, quantity, unit_price, total_price) VALUES(?, ?, ?, ?, ?)', (err5, data5) => {
+    db.query('SELECT * FROM ICT_TEAM.orders_detail WHERE user_id = ?', [user_id], (err5, data5) => {
       if (!err5) {
         console.log(data5);
-        res.send(data5); //응답을 클라이언트에 보낸다.
+        res.json(data5); //응답을 클라이언트에 보낸다.
       } else {
         console.log(err5);
       }
