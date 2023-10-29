@@ -205,7 +205,7 @@ app.delete('/cart', (req, res) => {
 // 주문페이지에서 상세주문정보 불러오기  (민지) check
 app.get('/cart/order', (req, res) => {
     // 사용자의 session 값
-    const user_id = req.session.logined.user_id;
+    const user_id = req.session.user.user_id;
 
     db.query('SELECT * FROM ICT_TEAM.orders_detail WHERE user_id = ?', [user_id], (err5, data5) => {
       if (!err5) {
@@ -219,7 +219,7 @@ app.get('/cart/order', (req, res) => {
 
   // 추가로 입력한 정보와 상세주문정보를 보내기 (민지)
 app.post('/cart/order/checkout', (req, res) => {
-    const user_id = 
+    const user_id = req.
 })
 
 //delivery 주문페이지
